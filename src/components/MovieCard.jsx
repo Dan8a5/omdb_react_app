@@ -1,16 +1,21 @@
-// components/MovieCard.jsx
-import React from 'react';
+import React, { useState } from 'react';
 
 const MovieCard = ({ movie }) => {
+  // State to handle user reviews
+  const [review, setReview] = useState('');
+  const [submittedReview, setSubmittedReview] = useState(null);
+
   const posterUrl = movie.Poster && movie.Poster !== "N/A" 
     ? movie.Poster 
     : 'https://via.placeholder.com/300x450.png?text=No+Poster+Available';
 
   const cardStyle = {
     border: '1px solid #ddd',
-    borderRadius: '4px',
+    borderRadius: '10px',
     overflow: 'hidden',
     backgroundColor: '#fff',
+    marginBottom: '20px', // Add margin between cards
+    
   };
 
   const imageStyle = {
@@ -41,6 +46,13 @@ const MovieCard = ({ movie }) => {
     color: '#333',
   };
 
+  // Function to handle review submission
+  const handleReviewSubmit = (e) => {
+    e.preventDefault();
+    setSubmittedReview(review);
+    setReview(''); // Clear the text area after submission
+  };
+
   return (
     <div style={cardStyle}>
       <img 
@@ -49,7 +61,7 @@ const MovieCard = ({ movie }) => {
         style={imageStyle}
         onError={(e) => {
           e.target.onerror = null; 
-          e.target.src = 'https://via.placeholder.com/300x450.png?text=Image+Not+Found'
+          e.target.src = 'https://via.placeholder.com/300x450.png?text=Image+Not+Found';
         }} 
       />
       <div style={infoStyle}>
@@ -66,6 +78,28 @@ const MovieCard = ({ movie }) => {
             <p>No ratings available</p>
           )}
         </div>
+
+        {/* Add review form */}
+        <form onSubmit={handleReviewSubmit} style={{ marginTop: '15px' }}>
+          <label htmlFor={`review-${movie.imdbID}`}><strong>Your Review:</strong></label>
+          <textarea
+            id={`review-${movie.imdbID}`}
+            value={review}
+            onChange={(e) => setReview(e.target.value)}
+            rows="3"
+            style={{ width: '100%', padding: '10px', marginTop: '10px' }}
+            placeholder="Write your review here..."
+          />
+          <button type="submit" style={{ marginTop: '10px' }}>Submit Review</button>
+        </form>
+
+        {/* Display the submitted review, if any */}
+        {submittedReview && (
+          <div style={{ marginTop: '15px', color: '#333' }}>
+            <h4>Submitted Review:</h4>
+            <p>{submittedReview}</p>
+          </div>
+        )}
       </div>
     </div>
   );
